@@ -9,11 +9,12 @@
 #include <exception>
 #endif
 
+
+//boggle header
 #include "boggle.h"
 
 std::vector<std::vector<char> > genBoard(unsigned int n, int seed)
 {
-	//random number generator
 	std::mt19937 r(seed);
 
 	//scrabble letter frequencies
@@ -34,11 +35,8 @@ std::vector<std::vector<char> > genBoard(unsigned int n, int seed)
 		board[i].resize(n);
 		for(unsigned  int j=0;j<n;j++)
 		{
-			board[i][j] = letters[(r() % letters.size())];
-		}
-	}
-	return board;
-}
+			board[i][j] = letters[(r() % letters.size())];}}
+	return board;}
 
 void printBoard(const std::vector<std::vector<char> >& board)
 {
@@ -64,8 +62,7 @@ std::pair<std::set<std::string>, std::set<std::string> > parseDict(std::string f
 	std::set<std::string> prefix;
 	std::string word;
 	while(dictfs >> word)
-	{
-		dict.insert(word);
+	{dict.insert(word);
 		for(unsigned int i=word.size()-1;i>=1;i--)
 		{
 			prefix.insert(word.substr(0,i));
@@ -74,6 +71,7 @@ std::pair<std::set<std::string>, std::set<std::string> > parseDict(std::string f
 	prefix.insert("");
 	return make_pair(dict, prefix);
 }
+// std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<std::string>& prefix, const std::vector<std::vector<char> >& board)
 
 std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<std::string>& prefix, const std::vector<std::vector<char> >& board)
 {
@@ -84,9 +82,7 @@ std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<s
 		{
 			boggleHelper(dict, prefix, board, "", result, i, j, 0, 1);
 			boggleHelper(dict, prefix, board, "", result, i, j, 1, 0);
-			boggleHelper(dict, prefix, board, "", result, i, j, 1, 1);
-		}
-	}
+			boggleHelper(dict, prefix, board, "", result, i, j, 1, 1);	}}
 	
 	return result;
 }
@@ -95,5 +91,26 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
 //add your solution here!
-
+// If current position is outside board boundaries
+if (r >= board.size() || c >= board[0].size()) {
+	return false;
 }
+
+// Build current word candidate
+word += board[r][c];
+
+// Check if current candidate is worth pursuing
+bool isInvalid = (prefix.find(word) == prefix.end() && dict.find(word) == dict.end());
+if (isInvalid) {
+	return false; }
+
+
+// bool hasLongerWord = boggleHelper(dict, prefix, board, word, result, r + dr, c + dc, dr, dc);
+
+bool hasLongerWord = boggleHelper(dict, prefix, board, word, result, r + dr, c + dc, dr, dc);
+
+if (!hasLongerWord && dict.find(word) != dict.end()) {
+	result.insert(word);
+}
+
+return (dict.find(word) != dict.end() || hasLongerWord);}
